@@ -1,0 +1,107 @@
+
+server.port=8081
+spring.application.name=billingUpdate
+
+# MySQL configuration LOCAL
+#spring.datasource.url=jdbc:mysql://localhost:3306/virtualnumber
+#spring.datasource.username=root
+#spring.datasource.password=6767
+#spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+#spring.jpa.open-in-view = true
+#spring.jpa.show-sql=true
+
+
+# SQL Configuration
+spring.datasource.url=jdbc:mysql://10.200.73.203:3306/VirtualNumber
+spring.datasource.username=dnBilling
+spring.datasource.password=iceland
+spring.datasource.type=com.zaxxer.hikari.HikariDataSource
+spring.datasource.hikari.idle-timeout=10000
+spring.datasource.hikari.maximum-pool-size=5
+spring.datasource.hikari.minimum-idle=5
+spring.datasource.hikari.pool-name=HikariPool
+
+
+###### UCIP PREPAID NORMAL REQUEST CONFIGS ########
+ucip.prepaidNormalRequest.transactionCurrency = PKR
+ucip.prepaidNormalRequest.originNodeType = EXT
+ucip.prepaidNormalRequest.originHostName = Dnsubscription
+ucip.prepaidNormalRequest.transactionType = Dnsubscription
+ucip.prepaidNormalRequest.transactionCode = Dnsubscription
+ucip.prepaidNormalRequest.externalData1 = Dnsubscription_VAS
+ucip.prepaidNormalRequest.externalData2 = Dnsubscription_VAS
+ucip.prepaidNormalRequest.waridHost = 10.13.32.179:10010 
+
+#### UCIP PREPAID NORMAL SYSTEM CONFIGS #####
+ucip.prepaidNormalConfigs.unsubSmsCommand=unsub origin:sms
+ucip.prepaidNormalConfigs.price = -181
+ucip.prepaidNormalConfigs.billingDaysToExtend = 1
+ucip.prepaidNormalConfigs.checkUsertype = true
+ucip.prepaidNormalConfigs.maxBillingTries = 240
+ucip.prepaidNormalConfigs.checkUsertypeFromDbssUrl = http://10.200.236.89:8092/api/v1/prepost?msisdn=
+
+####  UCIP POSTPAID NORMAL REQUEST CONFIGS ##########
+ucip.postpaidNormalRequest.transactionCurrency = PKR
+ucip.postpaidNormalRequest.originNodeType = EXT
+ucip.postpaidNormalRequest.originHostName = DnmonthlyPost
+ucip.postpaidNormalRequest.transactionType = DnmonthlyPost
+ucip.postpaidNormalRequest.transactionCode = DnmonthlyPost
+ucip.postpaidNormalRequest.externalData1 = DoubleNumberMonthlyPost_VAS
+ucip.postpaidNormalRequest.externalData2 = Voice
+ucip.postpaidNormalRequest.waridHost = 10.13.32.179:10010
+ucip.postpaidNormalRequest.telcoType = 1,3
+
+
+#### UCIP POSTPAID NORMAL SYSTEM CONFIGS #####
+ucip.postpaidNormalConfigs.unsubSmsCommand=unsub origin:sms
+ucip.postpaidNormalConfigs.price = -3346
+ucip.postpaidNormalConfigs.billingDaysToExtend = 30
+ucip.postpaidNormalConfigs.checkUsertype = true
+ucip.postpaidNormalConfigs.maxBillingTries = 240
+ucip.postpaidNormalConfigs.checkUsertypeFromDbssUrl = http://10.200.236.89:8092/api/v1/prepost?msisdn=
+
+
+##### UCIP PREPAID GOLDEN REQUEST CONFIGS #########
+ucip.prepaidGoldenRequest.transactionCurrency = PKR
+ucip.prepaidGoldenRequest.originNodeType = EXT
+ucip.prepaidGoldenRequest.originHostName = DNgoldennumber
+ucip.prepaidGoldenRequest.transactionType = Dngoldensubscription
+ucip.prepaidGoldenRequest.transactionCode = Dngoldensubscription
+ucip.prepaidGoldenRequest.externalData1 = Dngoldensubscription_VAS
+ucip.prepaidGoldenRequest.externalData2 = Dngoldensubscription_VAS
+ucip.prepaidGoldenRequest.waridHost = 10.13.32.179:10010
+
+#### UCIP PREPAID GOLDEN SYSTEM CONFIGS #####
+ucip.prepaidGoldenConfigs.unsubSmsCommand=unsub origin:sms
+ucip.prepaidGoldenConfigs.price = -286
+ucip.prepaidGoldenConfigs.billingDaysToExtend = 1
+ucip.prepaidGoldenConfigs.checkUsertype = true
+ucip.prepaidGoldenConfigs.maxBillingTries = 240
+ucip.prepaidGoldenConfigs.checkUsertypeFromDbssUrl = http://10.200.236.89:8092/api/v1/prepost?msisdn=
+
+#query
+#provgw.UPDATE_NUMBER_MAPPING=UPDATE NumberMapping SET status=CASE WHEN status NOT IN (1,3) THEN 1 ELSE status END, BilledUpto=DATE_ADD(NOW(), INTERVAL 1 DAY), BillingTries=0 WHERE telcomsisdn={TELCOMSISDN}
+provgw.UPDATE_NUMBER_MAPPING=UPDATE NumberMapping SET status=CASE WHEN status NOT IN (3,4,5) THEN 1 ELSE status END, BilledUpto=DATE_ADD('{BILLEDUPTO}', INTERVAL 1 DAY), BillingTries=0 WHERE telcomsisdn={TELCOMSISDN}
+provgw.INSERT_BILLING_DETAILS = insert into BillingDetail values(?,?,?,?,?)
+provgw.STATUS_FROM_NUMBERMAPPING= select status,TelcoType,TypeOfNum from NumberMapping where telcomsisdn = {TELCOMSISDN}
+provgw.INSERT_INTO_BILLINGHISTORY = insert into BillingHistory (subscriberNumber, previousStatus, newStatus, originNodeType, originHostName, originTimeStamp, transactionCurrency, adjustmentAmountRelative, transactionCode, transactionResponse, waridHost,originTransactionID,TStamp) values(?,?,?,?,?,?,?,?,?,?,?,?,?)
+
+
+provgw.PREPAIDNORMALREQUEST = Dnsubscription_VAS
+provgw.PREPAIDGOLDENREQUEST = Dngoldensubscription_VAS
+
+provgw.POSTPAID = 1
+provgw.PREPAID = 2
+provgw.TYPEOFNUM_NORMAL = 0
+provgw.TYPEOFNUM_GOLDEN = 9
+
+
+enable.API= true
+
+#file path
+#provgw.FILE_PATH=C:\\Users\\Arsalan\\Desktop\\My SpringBoot Projects\\billingUpdate\\24-05-21.dnd_report_out.csv
+provgw.FILE_PATH_NORMAL=C:/Users/Osama/Downloads/testing_10_msisdns_dnd.csv
+provgw.FILE_PATH_GOLDEN=C:/Users/Osama/Downloads/testing_10_msisdns_dng.csv
+
+#For logging
+logging.config=logback.xml
